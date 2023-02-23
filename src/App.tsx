@@ -35,32 +35,34 @@ function App() {
 
   return (
     <div className="App">
-      <LoginWithAnilist />
-      {/*<textarea onChange={(e) => handleAnilistToken(e)} placeholder="Enter the AniList token you copied from the link above"></textarea>
-       */}{" "}
-      <br></br>
-      <input
-        type="text"
-        placeholder="Enter your mangadex username"
-        onChange={(e) => handleUsernameChange(e)}
-      ></input>
-      <input
-        type="password"
-        placeholder="Enter your mangadex password"
-        onChange={(e) => handlePasswordChange(e)}
-      ></input>
-      <button
-        onClick={() =>
-          dispatch(
-            loginAsync({
-              username: username,
-              password: password,
-            })
-          )
-        }
-      >
-        Login to Mangadex
-      </button>
+      {!anilistToken && <LoginWithAnilist />}
+      {anilistToken && <p>Succesfully logged into AniList!</p>}
+      {!mangadexResponse && (
+        <div>
+          <input
+            type="text"
+            placeholder="Enter your mangadex username"
+            onChange={(e) => handleUsernameChange(e)}
+          ></input>
+          <input
+            type="password"
+            placeholder="Enter your mangadex password"
+            onChange={(e) => handlePasswordChange(e)}
+          ></input>
+          <button
+            onClick={() =>
+              dispatch(
+                loginAsync({
+                  username: username,
+                  password: password,
+                })
+              )
+            }
+          >
+            Login to Mangadex
+          </button>
+        </div>
+      )}
       {mangadexResponse && (
         <button
           onClick={() =>
