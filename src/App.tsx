@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
 import "./App.css";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useAppDispatch } from "./app/hooks";
 import { RootState } from "./app/store";
 import {
@@ -8,11 +8,16 @@ import {
   loginAsync,
 } from "./features/mangadex/mangadexSlice";
 
+import LoginWithAnilist from "./components/loginWithAnilist";
+
 function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [anilistToken, setAnilistToken] = useState("");
   const dispatch = useAppDispatch();
-  const mangadexResponse = useSelector((state: RootState) => state.mangadex.response) as any;
+  const mangadexResponse = useSelector(
+    (state: RootState) => state.mangadex.response
+  ) as any;
 
   const handleUsernameChange = (e: any) => {
     setUsername((e.target as HTMLInputElement).value);
@@ -20,16 +25,28 @@ function App() {
   const handlePasswordChange = (e: any) => {
     setPassword((e.target as HTMLInputElement).value);
   };
+
+  useEffect(() => {
+    const currentUrl = window.location.hash;
+    const params: any = new URLSearchParams(currentUrl.substring(1));
+    setAnilistToken(params.get("access_token"));
+    console.log(anilistToken);
+  }, [anilistToken]);
+
   return (
     <div className="App">
+      <LoginWithAnilist />
+      {/*<textarea onChange={(e) => handleAnilistToken(e)} placeholder="Enter the AniList token you copied from the link above"></textarea>
+       */}{" "}
+      <br></br>
       <input
         type="text"
-        placeholder="enter your mangadex username"
+        placeholder="Enter your mangadex username"
         onChange={(e) => handleUsernameChange(e)}
       ></input>
       <input
         type="password"
-        placeholder="enter your mangadex password"
+        placeholder="Enter your mangadex password"
         onChange={(e) => handlePasswordChange(e)}
       ></input>
       <button
@@ -45,7 +62,11 @@ function App() {
         Login to Mangadex
       </button>
       {mangadexResponse && (
-        <button onClick={() => dispatch(fetchFollowsAsync(mangadexResponse.token.session))}>
+        <button
+          onClick={() =>
+            dispatch(fetchFollowsAsync(mangadexResponse.token.session))
+          }
+        >
           Get follows
         </button>
       )}

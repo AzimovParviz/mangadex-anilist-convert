@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface mangadexState {
+export interface anilistState {
   token: string;
   response: string;
 }
@@ -11,7 +11,7 @@ type LoginBody = {
   password: string;
 };
 
-const initialState: mangadexState = {
+const initialState: anilistState = {
   token: "",
   response: "",
 };
@@ -22,10 +22,10 @@ const initialState: mangadexState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const loginAsync = createAsyncThunk(
-  "mangadex/login",
+  "anilist/login",
   async (credentias: LoginBody) => {
     const response = await axios.post(
-      "https://api.mangadex.org/auth/login",
+      "https://api.anilist.org/auth/login",
       credentias
     );
     // The value we return becomes the `fulfilled` action payload
@@ -34,7 +34,7 @@ export const loginAsync = createAsyncThunk(
 );
 
 export const fetchFollowsAsync = createAsyncThunk(
-  "mangadex/follows",
+  "anilist/follows",
   async (token: string) => {
     const config = {
       headers: {
@@ -42,15 +42,15 @@ export const fetchFollowsAsync = createAsyncThunk(
       },
     };
     const response = await axios.get(
-      "https://api.mangadex.org/manga/status",
+      "https://api.anilist.org/manga/status",
       config
     );
     return response.data;
   }
 );
 
-export const mangadexSlice = createSlice({
-  name: "mangadex",
+export const anilistSlice = createSlice({
+  name: "anilist",
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {},
@@ -85,10 +85,10 @@ export const mangadexSlice = createSlice({
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.mangadex.value)`
-//export const selectCount = (state: RootState) => state.mangadex.token;
+// in the slice file. For example: `useSelector((state: RootState) => state.anilist.value)`
+//export const selectCount = (state: RootState) => state.anilist.token;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 
-export default mangadexSlice.reducer;
+export default anilistSlice.reducer;
