@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { RootState, AppThunk } from "../../app/store";
 
-export interface mangadexLoginState {
+export interface mangadexState {
   token: string;
   response: string;
 }
@@ -12,7 +12,7 @@ type LoginBody = {
   password: string;
 };
 
-const initialState: mangadexLoginState = {
+const initialState: mangadexState = {
   token: "",
   response: "",
 };
@@ -23,19 +23,35 @@ const initialState: mangadexLoginState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const loginAsync = createAsyncThunk(
-  "mangadexLogin/login",
+  "mangadex/login",
   async (credentias: LoginBody) => {
     const response = await axios.post(
       "https://api.mangadex.org/auth/login",
       credentias
     );
     // The value we return becomes the `fulfilled` action payload
-    return response.data.token.session;
+    return response.data;
   }
 );
 
-export const mangadexLoginSlice = createSlice({
-  name: "mangadexLogin",
+export const fetchFollowsAsync = createAsyncThunk(
+  "mangadex/follows",
+  async (token: string) => {
+    const config = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+    const response = await axios.get(
+      "https://api.mangadex.org/manga/status",
+      config
+    );
+    return response.data;
+  }
+);
+
+export const mangadexSlice = createSlice({
+  name: "mangadex",
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {},
@@ -47,21 +63,33 @@ export const mangadexLoginSlice = createSlice({
         console.log("login pending");
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
-        state.response += action.payload;
-        state.token = action.payload.token.session;
+        state.response = action.payload;
+        console.log("login success");
+        //state.token = state.response.token.session;
       })
       .addCase(loginAsync.rejected, () => {
         console.log("failed to login");
+      })
+      .addCase(fetchFollowsAsync.pending, () => {
+        console.log("fetchFollows pending");
+      })
+      .addCase(fetchFollowsAsync.fulfilled, (state, action) => {
+        state.response += action.payload;
+        console.log("fetchFollows success");
+        //state.token = action.payload.token.session;
+      })
+      .addCase(fetchFollowsAsync.rejected, () => {
+        console.log("failed to fetchFollows");
       });
   },
 });
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.mangadexLogin.value)`
-//export const selectCount = (state: RootState) => state.mangadexLogin.token;
+// in the slice file. For example: `useSelector((state: RootState) => state.mangadex.value)`
+//export const selectCount = (state: RootState) => state.mangadex.token;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.
 
-export default mangadexLoginSlice.reducer;
+export default mangadexSlice.reducer;
