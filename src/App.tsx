@@ -1,56 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import { useAppDispatch } from "./app/hooks";
+import { loginAsync } from "./features/mangadexLogin/mangadexLoginSlice";
 
 function App() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useAppDispatch();
+
+  const handleUsernameChange = (e: any) => {
+    setUsername((e.target as HTMLInputElement).value);
+  };
+  const handlePasswordChange = (e: any) => {
+    setPassword((e.target as HTMLInputElement).value);
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <input
+        type="text"
+        placeholder="enter your mangadex username"
+        onChange={(e) => handleUsernameChange(e)}
+      ></input>
+      <input
+        type="password"
+        placeholder="enter your mangadex password"
+        onChange={(e) => handlePasswordChange(e)}
+      ></input>
+      <button
+        onClick={() =>
+          dispatch(
+            loginAsync({
+              username: username,
+              password: password,
+            })
+          )
+        }
+      >
+        Login to Mangadex
+      </button>
     </div>
   );
 }
