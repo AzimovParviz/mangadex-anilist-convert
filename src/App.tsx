@@ -5,26 +5,25 @@ import { useAppDispatch } from "./app/hooks";
 import { RootState } from "./app/store";
 import {
   fetchFollowsAsync,
-  loginAsync,
+  fetchMangaId,
 } from "./features/mangadex/mangadexSlice";
 
-import LoginWithAnilist from "./components/loginWithAnilist";
+import LoginWithAnilist from "./components/LoginWithAnilist";
+import LoginMangadex from "./components/LoginMangadex";
+import { updateMangaListAsync } from "./features/anilist/anilistSlice";
 
 function App() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [anilistToken, setAnilistToken] = useState("");
   const dispatch = useAppDispatch();
   const mangadexResponse = useSelector(
     (state: RootState) => state.mangadex.response
   ) as any;
-
-  const handleUsernameChange = (e: any) => {
-    setUsername((e.target as HTMLInputElement).value);
-  };
-  const handlePasswordChange = (e: any) => {
-    setPassword((e.target as HTMLInputElement).value);
-  };
+  const mangadexFollows = useSelector(
+    (state: RootState) => state.mangadex.follows
+  );
+  const selectedMangadexId = useSelector(
+    (state: RootState) => state.mangadex.currentMangaId
+  );
 
   useEffect(() => {
     const currentUrl = window.location.hash;
@@ -33,36 +32,13 @@ function App() {
     console.log(anilistToken);
   }, [anilistToken]);
 
+  useEffect(() => {}, [mangadexFollows]);
+
   return (
     <div className="App">
       {!anilistToken && <LoginWithAnilist />}
       {anilistToken && <p>Succesfully logged into AniList!</p>}
-      {!mangadexResponse && (
-        <div>
-          <input
-            type="text"
-            placeholder="Enter your mangadex username"
-            onChange={(e) => handleUsernameChange(e)}
-          ></input>
-          <input
-            type="password"
-            placeholder="Enter your mangadex password"
-            onChange={(e) => handlePasswordChange(e)}
-          ></input>
-          <button
-            onClick={() =>
-              dispatch(
-                loginAsync({
-                  username: username,
-                  password: password,
-                })
-              )
-            }
-          >
-            Login to Mangadex
-          </button>
-        </div>
-      )}
+      {!mangadexResponse && anilistToken && <LoginMangadex />}
       {mangadexResponse && (
         <button
           onClick={() =>
@@ -72,6 +48,24 @@ function App() {
           Get follows
         </button>
       )}
+      {mangadexFollows &&
+        Object.entries(mangadexFollows.statuses).map(([id, status]) => (
+          <button
+            key={id}
+            onClick={() => {
+              dispatch(fetchMangaId(id));
+              dispatch(
+                updateMangaListAsync({
+                  token: anilistToken,
+                  manga_id: selectedMangadexId, //from the selector. need to figure out dispatching cause this dispatch happens before selector refreshes
+                  manga_status: status,
+                })
+              );
+            }}
+          >
+            {id}
+          </button>
+        ))}
     </div>
   );
 }

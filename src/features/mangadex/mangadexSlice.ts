@@ -3,7 +3,9 @@ import axios from "axios";
 
 export interface mangadexState {
   token: string;
+  currentMangaId: string;
   response: string;
+  follows: FollowsList;
 }
 
 type LoginBody = {
@@ -11,9 +13,23 @@ type LoginBody = {
   password: string;
 };
 
+export type FollowsList = {
+  result: string;
+  statuses: {
+    [id: string]: string;
+  };
+};
+
 const initialState: mangadexState = {
   token: "",
   response: "",
+  currentMangaId: "",
+  follows: {
+    result: "",
+    statuses: {
+      "": "",
+    },
+  },
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -49,6 +65,16 @@ export const fetchFollowsAsync = createAsyncThunk(
   }
 );
 
+export const fetchMangaId = createAsyncThunk(
+  "mangadex/manga",
+  async (mangaId: string) => {
+    const response = await axios.get(
+      "https://api.mangadex.org/manga/" + mangaId
+    );
+    return response.data;
+  }
+);
+
 export const mangadexSlice = createSlice({
   name: "mangadex",
   initialState,
@@ -59,26 +85,34 @@ export const mangadexSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginAsync.pending, () => {
-        console.log("login pending");
+        console.log("mangadex login pending");
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.response = action.payload;
-        console.log("login success");
-        //state.token = state.response.token.session;
+        console.log("mangadex login success");
       })
       .addCase(loginAsync.rejected, () => {
-        console.log("failed to login");
+        console.log("mangadex failed to login");
       })
       .addCase(fetchFollowsAsync.pending, () => {
         console.log("fetchFollows pending");
       })
       .addCase(fetchFollowsAsync.fulfilled, (state, action) => {
-        state.response += action.payload;
+        state.follows = action.payload;
         console.log("fetchFollows success");
-        //state.token = action.payload.token.session;
       })
       .addCase(fetchFollowsAsync.rejected, () => {
         console.log("failed to fetchFollows");
+      })
+      .addCase(fetchMangaId.pending, () => {
+        console.log("fetch manga id pending");
+      })
+      .addCase(fetchMangaId.fulfilled, (state, action) => {
+        state.currentMangaId = action.payload.data.attributes.links.al;
+        console.log("fetch manga id success: ", state.currentMangaId);
+      })
+      .addCase(fetchMangaId.rejected, () => {
+        console.log("failed to fetch manga id");
       });
   },
 });

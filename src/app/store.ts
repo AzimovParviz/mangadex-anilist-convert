@@ -1,11 +1,12 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-import mangadexReducer from '../features/mangadex/mangadexSlice';
-
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import counterReducer from "../features/counter/counterSlice";
+import mangadexReducer from "../features/mangadex/mangadexSlice";
+import anilistReducer from "../features/anilist/anilistSlice";
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
     mangadex: mangadexReducer,
+    anilist: anilistReducer,
   },
 });
 
