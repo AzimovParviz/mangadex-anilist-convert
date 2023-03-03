@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface mangadexState {
+export type mangadexState = {
   token: string;
   currentMangaId: string;
   response: string;

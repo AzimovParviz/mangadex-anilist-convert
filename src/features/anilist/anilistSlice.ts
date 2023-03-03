@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface anilistState {
@@ -13,6 +13,18 @@ type AnilistQueryBody = {
   token: string;
   manga_id: string;
   manga_status: string;
+};
+
+export interface StatusDictionary {
+  [mangadexStatus: string]: string;
+}
+
+const anilistStatuses: StatusDictionary = {
+  reading: "CURRENT",
+  completed: "COMPLETED",
+  plan_to_read: "PLANNING",
+  dropped: "DROPPED",
+  on_hold: "PAUSED",
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -48,7 +60,7 @@ export const updateMangaListAsync = createAsyncThunk(
 	  `;
     const variables = {
       mediaId: body.manga_id,
-      status: body.manga_status,
+      status: anilistStatuses[body.manga_status],
     };
     const response = await axios.post(
       "https://graphql.anilist.co",
