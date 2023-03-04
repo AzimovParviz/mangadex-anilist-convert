@@ -58,8 +58,11 @@ export const updateMangaListAsync = createAsyncThunk(
 	    }
 	}	
 	  `;
+    const mangadex_response = await axios.get(
+      "https://api.mangadex.org/manga/" + body.manga_id
+    );
     const variables = {
-      mediaId: body.manga_id,
+      mediaId: mangadex_response.data.data.attributes.links.al,
       status: anilistStatuses[body.manga_status],
     };
     const response = await axios.post(
@@ -88,7 +91,7 @@ export const anilistSlice = createSlice({
       })
       .addCase(updateMangaListAsync.fulfilled, (state, action) => {
         state.response += action.payload;
-        console.log("update manga list success");
+        console.log("update manga list success", state.response);
         //state.token = action.payload.token.session;
       })
       .addCase(updateMangaListAsync.rejected, (state, action) => {

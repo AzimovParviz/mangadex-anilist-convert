@@ -53,11 +53,11 @@ function App() {
           <button
             key={id}
             onClick={() => {
-              dispatch(fetchMangaId(id));
+		    //dispatch(fetchMangaId(id));
               dispatch(
                 updateMangaListAsync({
                   token: anilistToken,
-                  manga_id: selectedMangadexId, //from the selector. need to figure out dispatching cause this dispatch happens before selector refreshes
+                  manga_id: id, //from the selector. need to figure out dispatching cause this dispatch happens before selector refreshes
                   manga_status: status,
                 })
               );
