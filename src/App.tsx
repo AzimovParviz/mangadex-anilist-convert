@@ -5,12 +5,13 @@ import { useAppDispatch } from "./app/hooks";
 import { RootState } from "./app/store";
 import {
   fetchFollowsAsync,
-  fetchMangaId,
+  FollowsList,
 } from "./features/mangadex/mangadexSlice";
 
 import LoginWithAnilist from "./components/LoginWithAnilist";
 import LoginMangadex from "./components/LoginMangadex";
 import { updateMangaListAsync } from "./features/anilist/anilistSlice";
+import { sleep } from "./utils/sleep";
 
 function App() {
   const [anilistToken, setAnilistToken] = useState("");
@@ -21,9 +22,11 @@ function App() {
   const mangadexFollows = useSelector(
     (state: RootState) => state.mangadex.follows
   );
-  const selectedMangadexId = useSelector(
+  /*
+	 *const selectedMangadexId = useSelector(
     (state: RootState) => state.mangadex.currentMangaId
   );
+	 */
 
   useEffect(() => {
     const currentUrl = window.location.hash;
@@ -32,7 +35,18 @@ function App() {
     console.log(anilistToken);
   }, [anilistToken]);
 
-  useEffect(() => {}, [mangadexFollows]);
+  const commitMangaUpdates = async (follows: FollowsList) => {
+    for (const manga in follows.statuses) {
+      dispatch(
+        updateMangaListAsync({
+          token: anilistToken,
+          manga_id: manga,
+          manga_status: follows.statuses[manga],
+        })
+      );
+      await sleep(500);
+    }
+  };
 
   return (
     <div className="App">
@@ -48,24 +62,16 @@ function App() {
           Get follows
         </button>
       )}
-      {mangadexFollows &&
-        Object.entries(mangadexFollows.statuses).map(([id, status]) => (
-          <button
-            key={id}
-            onClick={() => {
-		    //dispatch(fetchMangaId(id));
-              dispatch(
-                updateMangaListAsync({
-                  token: anilistToken,
-                  manga_id: id, //from the selector. need to figure out dispatching cause this dispatch happens before selector refreshes
-                  manga_status: status,
-                })
-              );
-            }}
-          >
-            {id}
-          </button>
-        ))}
+      {mangadexFollows && (
+        <button
+          onClick={() => {
+            //dispatch(fetchMangaId(id));
+            commitMangaUpdates(mangadexFollows);
+          }}
+        >
+          Upload your AniList with Mangadex entries
+        </button>
+      )}
     </div>
   );
 }
