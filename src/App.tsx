@@ -22,11 +22,6 @@ function App() {
   const mangadexFollows = useSelector(
     (state: RootState) => state.mangadex.follows
   );
-  /*
-	 *const selectedMangadexId = useSelector(
-    (state: RootState) => state.mangadex.currentMangaId
-  );
-	 */
 
   useEffect(() => {
     const currentUrl = window.location.hash;
@@ -44,7 +39,7 @@ function App() {
           manga_status: follows.statuses[manga],
         })
       );
-      await sleep(500);
+      await sleep(500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
     }
   };
 
