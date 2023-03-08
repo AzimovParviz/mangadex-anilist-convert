@@ -75,7 +75,7 @@ export const anilistSlice = createSlice({
         console.log("update manga list pending");
       })
       .addCase(updateMangaListAsync.fulfilled, (state, action) => {
-        state.response += action.payload;
+        state.response = action.payload;
         console.log("update manga list success", state.response);
         //state.token = action.payload.token.session;
       })
