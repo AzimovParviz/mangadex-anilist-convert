@@ -8,7 +8,7 @@ Use docker compose **docker compose up**
 # Usage
 Login through the AniList to authorize this application
 
-##Note
+## Note
 
 Right now only works locally because I set the allowed redirect only to localhost, in the future it will be hosted on GitHub pages or alternatives
 

@@ -1,30 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
-export interface anilistState {
-  response: string;
-}
+import { AnilistQueryBody, anilistState, anilistStatuses } from "../../types";
 
 const initialState: anilistState = {
   response: "",
-};
-
-type AnilistQueryBody = {
-  token: string;
-  manga_id: string;
-  manga_status: string;
-};
-
-export interface StatusDictionary {
-  [mangadexStatus: string]: string;
-}
-
-const anilistStatuses: StatusDictionary = {
-  reading: "CURRENT",
-  completed: "COMPLETED",
-  plan_to_read: "PLANNING",
-  dropped: "DROPPED",
-  on_hold: "PAUSED",
 };
 
 export const updateMangaListAsync = createAsyncThunk(
@@ -38,10 +17,11 @@ export const updateMangaListAsync = createAsyncThunk(
       },
     };
     const mutation_query = `
-	mutation($mediaId: Int, $status: MediaListStatus) { 
-	    SaveMediaListEntry (mediaId: $mediaId, status: $status) {
+	mutation($mediaId: Int, $status: MediaListStatus, $scoreRaw: Int) { 
+	    SaveMediaListEntry (mediaId: $mediaId, status: $status, scoreRaw: $scoreRaw) {
 		id
 		status
+		score
 	    }
 	}	
 	  `;
@@ -52,6 +32,7 @@ export const updateMangaListAsync = createAsyncThunk(
     const variables = {
       mediaId: mangadex_response.data.data.attributes.links.al,
       status: anilistStatuses[body.manga_status],
+      scoreRaw: body.scoreRaw,
     };
     const response = await axios.post(
       "https://graphql.anilist.co",

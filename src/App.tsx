@@ -5,13 +5,14 @@ import { useAppDispatch } from "./app/hooks";
 import { RootState } from "./app/store";
 import {
   fetchFollowsAsync,
-  FollowsList,
+  fetchScoresAsync,
 } from "./features/mangadex/mangadexSlice";
 
 import LoginWithAnilist from "./components/LoginWithAnilist";
 import LoginMangadex from "./components/LoginMangadex";
 import { updateMangaListAsync } from "./features/anilist/anilistSlice";
 import { sleep } from "./utils/sleep";
+import { FollowsList } from "./types";
 
 function App() {
   const [anilistToken, setAnilistToken] = useState("");
@@ -21,6 +22,9 @@ function App() {
   ) as any;
   const mangadexFollows = useSelector(
     (state: RootState) => state.mangadex.follows
+  );
+  const mangadexScores = useSelector(
+    (state: RootState) => state.mangadex.scores
   );
 
   useEffect(() => {
@@ -33,15 +37,29 @@ function App() {
   const commitMangaUpdates = async (follows: FollowsList) => {
     for (const manga in follows.statuses) {
       dispatch(
+        fetchScoresAsync({
+          token: mangadexResponse.token.session,
+          follows: [manga],
+        })
+      );
+      dispatch(
         updateMangaListAsync({
           token: anilistToken,
           manga_id: manga,
           manga_status: follows.statuses[manga],
+          scoreRaw: mangadexScores?.ratings[manga]?.rating
+            ? mangadexScores.ratings[manga].rating
+            : 0,
         })
       );
       await sleep(500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
     }
   };
+
+  console.log(
+    "object keys mangadexFollows: ",
+    Object.keys(mangadexFollows.statuses)
+  );
 
   return (
     <div className="App">
@@ -49,23 +67,39 @@ function App() {
       {anilistToken && <p>Succesfully logged into AniList!</p>}
       {!mangadexResponse && anilistToken && <LoginMangadex />}
       {mangadexResponse && (
-        <button
-          onClick={() =>
-            dispatch(fetchFollowsAsync(mangadexResponse.token.session))
-          }
-        >
-          Get follows
-        </button>
+        <div>
+          <button
+            onClick={() =>
+              dispatch(fetchFollowsAsync(mangadexResponse.token.session))
+            }
+          >
+            Get follows
+          </button>
+        </div>
       )}
       {mangadexFollows && (
-        <button
-          onClick={() => {
-            //dispatch(fetchMangaId(id));
-            commitMangaUpdates(mangadexFollows);
-          }}
-        >
-          Upload your AniList with Mangadex entries
-        </button>
+        <div>
+          <button
+            onClick={() =>
+              dispatch(
+                fetchScoresAsync({
+                  token: mangadexResponse.token.session,
+                  follows: Object.keys(mangadexFollows.statuses),
+                })
+              )
+            }
+          >
+            Get scores (optional)
+          </button>
+          <button
+            onClick={() => {
+              //dispatch(fetchMangaId(id));
+              commitMangaUpdates(mangadexFollows);
+            }}
+          >
+            Upload your AniList with Mangadex entries
+          </button>
+        </div>
       )}
     </div>
   );
