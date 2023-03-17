@@ -47,11 +47,5 @@ export type ScoreBody = {
 }
 
 export type ScoresList = {
-  result: string;
-  ratings: {
-    [id: string]: {
-      rating: number;
-      createdAt?: Date;
-    };
-  };
+    [mangaId: string]: number
 };

@@ -47,12 +47,12 @@ function App() {
           token: anilistToken,
           manga_id: manga,
           manga_status: follows.statuses[manga],
-          scoreRaw: mangadexScores?.ratings[manga]?.rating
-            ? mangadexScores.ratings[manga].rating
+          scoreRaw: mangadexScores[manga]
+            ? mangadexScores[manga]
             : 0,
         })
       );
-      await sleep(500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
+      await sleep(1500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
     }
   };
 
@@ -60,6 +60,8 @@ function App() {
     "object keys mangadexFollows: ",
     Object.keys(mangadexFollows.statuses)
   );
+
+  console.log("scores fetched: ", mangadexScores);
 
   return (
     <div className="App">
@@ -84,7 +86,7 @@ function App() {
               dispatch(
                 fetchScoresAsync({
                   token: mangadexResponse.token.session,
-                  follows: Object.keys(mangadexFollows.statuses),
+                  follows: Object.keys(mangadexFollows.statuses).slice(0, 100),
                 })
               )
             }
@@ -97,7 +99,7 @@ function App() {
               commitMangaUpdates(mangadexFollows);
             }}
           >
-            Upload your AniList with Mangadex entries
+            Upload your AniList with Mangadex entries (may take a while, do not close the page)
           </button>
         </div>
       )}

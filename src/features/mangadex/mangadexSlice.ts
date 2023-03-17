@@ -13,12 +13,7 @@ const initialState: mangadexState = {
     },
   },
   scores: {
-    result: "",
-    ratings: {
-      "": {
-        rating: 50,
-      },
-    },
+    "": 0,
   },
 };
 
@@ -58,8 +53,8 @@ export const fetchScoresAsync = createAsyncThunk(
         Authorization: "Bearer " + body.token,
       },
       params: {
-	manga: body.follows,
-      }
+        manga: body.follows,
+      },
     };
     const response = await axios.get("https://api.mangadex.org/rating", config);
     return response.data;
@@ -110,13 +105,13 @@ export const mangadexSlice = createSlice({
         console.log("fetch manga id success: ", state.currentMangaId);
       })
       .addCase(fetchMangaId.rejected, () => {
-        console.log("failed to fetch manga id", );
+        console.log("failed to fetch manga id");
       })
       .addCase(fetchScoresAsync.pending, () => {
         console.log("fetch mangadex scores pending");
       })
       .addCase(fetchScoresAsync.fulfilled, (state, action) => {
-        state.scores = action.payload.data;
+        state.scores += action.payload.data;
         console.log("fetch mangadex scores success: ", state.scores);
       })
       .addCase(fetchScoresAsync.rejected, (action) => {
