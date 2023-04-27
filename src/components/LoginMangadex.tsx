@@ -25,6 +25,7 @@ export default function LoginMangadex() {
         onChange={(e) => handlePasswordChange(e)}
       ></input>
       <button
+        className="loginMangadex"
         type="submit"
         onClick={() =>
           dispatch(

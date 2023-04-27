@@ -24,7 +24,6 @@ export const loginAsync = createAsyncThunk(
       "https://api.mangadex.org/auth/login",
       credentias
     );
-    // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
 );
@@ -112,7 +111,7 @@ export const mangadexSlice = createSlice({
       })
       .addCase(fetchScoresAsync.fulfilled, (state, action) => {
         state.scores += action.payload.data;
-        console.log("fetch mangadex scores success: ", state.scores);
+        console.log("fetch mangadex scores success: ", action.payload.data);
       })
       .addCase(fetchScoresAsync.rejected, (action) => {
         console.log("failed to fetch mangadex scores", action);

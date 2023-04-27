@@ -37,19 +37,11 @@ function App() {
   const commitMangaUpdates = async (follows: FollowsList) => {
     for (const manga in follows.statuses) {
       dispatch(
-        fetchScoresAsync({
-          token: mangadexResponse.token.session,
-          follows: [manga],
-        })
-      );
-      dispatch(
         updateMangaListAsync({
           token: anilistToken,
           manga_id: manga,
           manga_status: follows.statuses[manga],
-          scoreRaw: mangadexScores[manga]
-            ? mangadexScores[manga]
-            : 0,
+          scoreRaw: mangadexScores[manga] ? mangadexScores[manga] : 0,
         })
       );
       await sleep(1500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
@@ -71,35 +63,42 @@ function App() {
       {mangadexResponse && (
         <div>
           <button
+            className="getFollowsButton"
             onClick={() =>
               dispatch(fetchFollowsAsync(mangadexResponse.token.session))
             }
           >
             Get follows
           </button>
+          <br></br>
         </div>
       )}
-      {mangadexFollows && (
+      {mangadexFollows && mangadexResponse && (
         <div>
           <button
+            className="getScoresButton"
             onClick={() =>
               dispatch(
                 fetchScoresAsync({
                   token: mangadexResponse.token.session,
-                  follows: Object.keys(mangadexFollows.statuses).slice(0, 100),
+                  follows: Object.keys(mangadexFollows.statuses),
                 })
               )
             }
           >
             Get scores (optional)
           </button>
+          <br></br>
           <button
+            className="uploadEntriesButton"
             onClick={() => {
               //dispatch(fetchMangaId(id));
               commitMangaUpdates(mangadexFollows);
             }}
+            //Potential progress bar: currently succesful respnses / number of total manga
           >
-            Upload your AniList with Mangadex entries (may take a while, do not close the page)
+            Upload your AniList with Mangadex entries (may take a while, do not
+            close the page)
           </button>
         </div>
       )}
