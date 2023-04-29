@@ -4,6 +4,10 @@ html * {
   font-family: "Montserrat", sans-serif !important;
 }
 
+body {
+  background-color: gray;
+}
+
 .App {
   text-align: center;
 }
@@ -44,20 +48,34 @@ html * {
   }
 }
 
+#mangadexLoginBody :not(.loginMangadex){
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#mangadexLoginBody input {
+	margin: auto;
+	padding: 10px;
+}
+
 .loginMangadex,
 .uploadEntriesButton,
 .getScoresButton,
 .getFollowsButton {
-  background-color: lightblue;
+  background-color: lightgray;
   border-radius: 15px;
   padding: 10px;
+  border: none;
+  font-weight: bold;
 }
 
 .loginAnilist {
-  background-color: lightblue;
+  background-color: lightgray;
   padding: 10px;
   border-radius: 5px;
   text-decoration: none;
+  font-weight: bold;
 }
 
 input[type="text"],
@@ -67,4 +85,10 @@ input[type="password"] {
   height: 20px;
   border: 2px solid gray;
   border-radius: 3px;
+}
+
+img {
+  position: fixed;
+  right: 0;
+  bottom: 0;
 }

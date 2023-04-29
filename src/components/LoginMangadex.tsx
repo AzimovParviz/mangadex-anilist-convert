@@ -13,7 +13,7 @@ export default function LoginMangadex() {
     setPassword((e.target as HTMLInputElement).value);
   };
   return (
-    <div>
+    <div id="mangadexLoginBody">
       <input
         type="text"
         placeholder="Enter your mangadex username"

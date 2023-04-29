@@ -102,6 +102,7 @@ function App() {
           </button>
         </div>
       )}
+      <img src="peek.png" alt="" />
     </div>
   );
 }
