@@ -42,10 +42,12 @@ export type FollowsList = {
 };
 
 export type ScoreBody = {
-  token: string,
-  follows: string[],
-}
+  token: string;
+  follows: string[];
+};
 
 export type ScoresList = {
-    [mangaId: string]: number
+  [mangaId: string]: {
+    rating: number;
+  };
 };

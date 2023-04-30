@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import { LoginBody, mangadexState, ScoreBody } from "../../types";
+import { LoginBody, mangadexState, ScoreBody, ScoresList } from "../../types";
 
 const initialState: mangadexState = {
   token: "",
@@ -13,7 +13,9 @@ const initialState: mangadexState = {
     },
   },
   scores: {
-    "": 0,
+    "": {
+      rating: 0,
+    },
   },
 };
 
@@ -47,16 +49,22 @@ export const fetchFollowsAsync = createAsyncThunk(
 export const fetchScoresAsync = createAsyncThunk(
   "mangadex/rating",
   async (body: ScoreBody) => {
-    const config = {
-      headers: {
-        Authorization: "Bearer " + body.token,
-      },
-      params: {
-        manga: body.follows,
-      },
+    let finalData: ScoresList = {
+      "": { rating: 0 },
     };
-    const response = await axios.get("https://api.mangadex.org/rating", config);
-    return response.data;
+    //Mangadex has a 150 parameter limit for query params. We serparate every request so there are no more than 150 params
+    for (let i = 0; i < body.follows.length; i + 150) {
+      const response = await axios.get("https://api.mangadex.org/rating", {
+        headers: {
+          Authorization: "Bearer " + body.token,
+        },
+        params: {
+          manga: body.follows.slice(i, i + 150),
+        },
+      });
+      finalData += response.data.ratings;
+    }
+    return finalData;
   }
 );
 
@@ -109,10 +117,13 @@ export const mangadexSlice = createSlice({
       .addCase(fetchScoresAsync.pending, () => {
         console.log("fetch mangadex scores pending");
       })
-      .addCase(fetchScoresAsync.fulfilled, (state, action) => {
-        state.scores += action.payload.data;
-        console.log("fetch mangadex scores success: ", action.payload.data);
-      })
+      .addCase(
+        fetchScoresAsync.fulfilled,
+        (state, action: PayloadAction<ScoresList>) => {
+          state.scores = action.payload;
+          console.log("fetch mangadex scores success: ", action.payload);
+        }
+      )
       .addCase(fetchScoresAsync.rejected, (action) => {
         console.log("failed to fetch mangadex scores", action);
       });

@@ -27,6 +27,7 @@ function App() {
     (state: RootState) => state.mangadex.scores
   );
 
+  //retrieving the anilist token from the URL after the login redirect
   useEffect(() => {
     const currentUrl = window.location.hash;
     const params: any = new URLSearchParams(currentUrl.substring(1));
@@ -41,7 +42,7 @@ function App() {
           token: anilistToken,
           manga_id: manga,
           manga_status: follows.statuses[manga],
-          scoreRaw: mangadexScores[manga] ? mangadexScores[manga] : 0,
+			scoreRaw: mangadexScores[manga]["rating"] ? mangadexScores[manga]["rating"] : 0,
         })
       );
       await sleep(1500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
@@ -74,7 +75,7 @@ function App() {
         </div>
       )}
       {mangadexFollows && mangadexResponse && (
-        <div>
+        <div className="buttonsDivAfterLogin">
           <button
             className="getScoresButton"
             onClick={() =>
@@ -88,7 +89,6 @@ function App() {
           >
             Get scores (optional)
           </button>
-          <br></br>
           <button
             className="uploadEntriesButton"
             onClick={() => {
