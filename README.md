@@ -1,19 +1,12 @@
-# Starting
-Either **npm install** then **npm start**
-
-## OR
-
-Use docker compose **docker compose up**
-
 # Usage
-Login through the AniList to authorize this application
+Click "Login to AniList" button to get redirected to their login page
 
-## Note
+After being redirected back to the website, use your mangadex credentials to log into mangadex 
 
-Right now only works locally because I set the allowed redirect only to localhost, in the future it will be hosted on GitHub pages or alternatives
+"Get follows" button will retrieve your follow list entries
 
-After that, login to mangadex with your credentials (Mangadex developers are working on implementing OAuth2, will be added here as soon as possible)
+(optional) "Get scores" to retrieve the ratings you gave on mangadex. If you don't click this, no ratings will be applied when porting to AniList 
 
-Click the **Get follows** button after successfully logging in
+Click the final button to upload to AniList. Depending on how much entries you've had, it may take a while, since we need to take a breather between sending requests to not get rate limited by AniList
 
-If you are ready, click the **Upload your AniList with Mangadex entries** button. Right now the only indication of progress is in the browser console but visual indication is in the plans 
+Currently there's no progress bar implemented but you could check the network tab in your browser's developer tools
