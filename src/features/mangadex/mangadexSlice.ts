@@ -53,7 +53,8 @@ export const fetchScoresAsync = createAsyncThunk(
       "": { rating: 0 },
     };
     //Mangadex has a 150 parameter limit for query params. We serparate every request so there are no more than 150 params
-    for (let i = 0; i < body.follows.length; i + 150) {
+    //TODO: right now it's inifinitely looping when you dispatch the action
+    for (let i = 0; i < body.follows.length; i += 150) {
       const response = await axios.get("https://api.mangadex.org/rating", {
         headers: {
           Authorization: "Bearer " + body.token,
