@@ -63,8 +63,12 @@ export const fetchScoresAsync = createAsyncThunk(
           manga: body.follows.slice(i, i + 150),
         },
       });
-      finalData += response.data.ratings;
+      console.log("rating response is: ", response.data);
+      Object.assign(finalData, response.data.ratings);
     }
+    //deleting the empty key value pair that we used to initialize finalData
+    delete finalData[""];
+    console.log("final data is: ", finalData);
     return finalData;
   }
 );

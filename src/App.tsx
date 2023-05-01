@@ -36,13 +36,19 @@ function App() {
   }, [anilistToken]);
 
   const commitMangaUpdates = async (follows: FollowsList) => {
+    console.log("how the scores looking like", mangadexScores);
+    let scoreOfManga = 0;
     for (const manga in follows.statuses) {
+      if (mangadexScores[manga]?.rating > 0) {
+        scoreOfManga = mangadexScores[manga].rating;
+        console.log("score of manga: ", scoreOfManga);
+      }
       dispatch(
         updateMangaListAsync({
           token: anilistToken,
           manga_id: manga,
           manga_status: follows.statuses[manga],
-			scoreRaw: mangadexScores[manga]["rating"] ? mangadexScores[manga]["rating"] : 0,
+          scoreRaw: scoreOfManga,
         })
       );
       await sleep(1500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
