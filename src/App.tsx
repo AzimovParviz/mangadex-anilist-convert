@@ -8,8 +8,8 @@ import {
   fetchScoresAsync,
 } from "./features/mangadex/mangadexSlice";
 
-import LoginWithAnilist from "./components/LoginWithAnilist";
-import LoginMangadex from "./components/LoginMangadex";
+import LoginWithAnilist from "./components/LoginWithAnilist/LoginWithAnilist";
+import LoginMangadex from "./components/LoginMangadex/LoginMangadex";
 import { updateMangaListAsync } from "./features/anilist/anilistSlice";
 import { sleep } from "./utils/sleep";
 import { FollowsList } from "./types";
@@ -42,15 +42,16 @@ function App() {
       if (mangadexScores[manga]?.rating > 0) {
         scoreOfManga = mangadexScores[manga].rating;
         console.log("score of manga: ", scoreOfManga);
+        dispatch(
+          updateMangaListAsync({
+            token: anilistToken,
+            manga_id: manga,
+            manga_status: follows.statuses[manga],
+            scoreRaw: scoreOfManga,
+          })
+        );
       }
-      dispatch(
-        updateMangaListAsync({
-          token: anilistToken,
-          manga_id: manga,
-          manga_status: follows.statuses[manga],
-          scoreRaw: scoreOfManga,
-        })
-      );
+
       await sleep(1500); //we can do 90 requests per minute from 1 IP, so limiting the amount we send by sleeping
     }
   };
