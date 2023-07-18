@@ -8,6 +8,13 @@ body {
   background-color: gray;
 }
 
+footer {
+	bottom: 0;
+	position: fixed;
+	background-color: white;
+	opacity: 0.7;
+}
+
 .App {
   text-align: center;
   display: flex;

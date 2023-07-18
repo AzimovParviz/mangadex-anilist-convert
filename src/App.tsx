@@ -78,7 +78,6 @@ function App() {
           >
             Get follows
           </button>
-          <br></br>
         </div>
       )}
       {mangadexFollows && mangadexResponse && (
@@ -110,6 +109,9 @@ function App() {
         </div>
       )}
       <img src="peek.png" alt="" />
+	  <footer>
+		  Credit to the Mangadex and AniList teams for their APIs that made this app possible 
+	  </footer>
     </div>
   );
 }
